@@ -1,18 +1,16 @@
-/**
- * Created by Andrey Kutkov on 1/13/2016.
- */
-
-var jwt    = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 var config = require('../common/config');
 var User = require(__dirname + '/../model/user');
 
 var tokenAPI = {};
 
-tokenAPI.ensureAdmin = function (req, res, next){
+tokenAPI.ensureAdmin = function(req, res, next) {
 
     var id = req.decoded._id || req.body.id || req.query.id;
 
-    User.findOne({_id:id}, function(err, doc) {
+    User.findOne({
+        _id: id
+    }, function(err, doc) {
 
         if (err) {
             console.log(err);
@@ -22,9 +20,9 @@ tokenAPI.ensureAdmin = function (req, res, next){
             });
         }
 
-        if (doc){
+        if (doc) {
 
-            if ((doc.permission &0x6)!=0) {
+            if ((doc.permission & 0x6) != 0) {
                 next();
             } else {
                 return res.status(200).send({
@@ -42,7 +40,7 @@ tokenAPI.ensureAdmin = function (req, res, next){
     });
 };
 
-tokenAPI.ensureAuthenticated = function (req, res, next) {
+tokenAPI.ensureAuthenticated = function(req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-auth-token'];
     // decode token
@@ -75,8 +73,10 @@ tokenAPI.ensureAuthenticated = function (req, res, next) {
     }
 };
 
-tokenAPI.ensureUserApproved = function (req, res, next){
-    User.findOne({_id: req.decoded._id}, function (err, doc) {
+tokenAPI.ensureUserApproved = function(req, res, next) {
+    User.findOne({
+        _id: req.decoded._id
+    }, function(err, doc) {
 
         if (err) {
             console.log(err);

@@ -1,6 +1,4 @@
-/**
- * Created by DreamSoft on 7/30/2015.
- */
+
 'use strict';
 
 var through = require('through');

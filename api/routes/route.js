@@ -4,7 +4,7 @@ var User = require(__dirname + '/../model/user');
 var promise = require("q");
 var express = require('express');
 var router = express.Router();
-var jwt    = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 var config = require('../common/config');
 
 var token = require('../controller/token');
@@ -16,7 +16,7 @@ var chest = require('../controller/chest');
 // =======================
 // Test APIs
 // =======================
-router.get('/test/whatisdollar',test.whatIsDollar);
+router.get('/test/whatisdollar', test.whatIsDollar);
 // =======================
 // User Management APIs
 // =======================
@@ -49,7 +49,7 @@ router.put('/user/:id/approve', token.ensureAuthenticated, token.ensureAdmin, us
  http://localhost:3000/api/user/login [POST]
  email : email address
  */
- router.post('/user/resetpassword', user.sendPasswordResetLink);
+router.post('/user/resetpassword', user.sendPasswordResetLink);
 /*
  http://localhost:3000/api/web/confirm?token={validation_token} [GET]
  */

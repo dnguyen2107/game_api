@@ -1,7 +1,3 @@
-/**
- * Created by Andrey Kutkov on 1/13/2016.
- */
-
 var db = require(__dirname + '/../common/db');
 var Schema = db.Schema;
 var crypto = require('crypto');
@@ -9,17 +5,25 @@ var crypto = require('crypto');
 var UserSchema = new Schema({
     email: {
         type: String,
-        index:true,
+        index: true,
         unique: true,
         required: 'Email address is required. '
     },
-    first_name: {type: String, default: ''},
-    last_name: {type:String, default:''},
+    first_name: {
+        type: String,
+        default: ''
+    },
+    last_name: {
+        type: String,
+        default: ''
+    },
     hashed_password: {
         type: String,
         required: 'Password cannot be blank. '
     },
-    salt: {type: String},
+    salt: {
+        type: String
+    },
 
     permission: { // 1: Ordinary User, > 1 Admin
         type: Number,
@@ -27,7 +31,10 @@ var UserSchema = new Schema({
         max: 9,
         default: 1
     },
-    approved: {type:Boolean, default: false},
+    approved: {
+        type: Boolean,
+        default: false
+    },
     updated_at: {
         type: Date,
         default: Date.now()
@@ -51,27 +58,31 @@ UserSchema
         this.salt = this.makeSalt();
         this.hashed_password = this.encryptPassword(password);
     })
-    .get(function() { return this._password });
+    .get(function() {
+        return this._password
+    });
 
 /**
  * Validations
  */
 
-var validatePresenceOf = function (value) {
+var validatePresenceOf = function(value) {
     return value && value.length
 };
 
 
 // the below 4 validations only apply if you are signing up traditionally
 
-UserSchema.path('email').validate(function (email) {
-    return  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);//???
+UserSchema.path('email').validate(function(email) {
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email); //???
 }, 'Please fill a valid email address. ');
 
-UserSchema.path('email').validate(function (email, fn) {
+UserSchema.path('email').validate(function(email, fn) {
     var User = db.model('users');
     // Check only when it is a new user or when email field is modified
-    User.find({ email: email }).exec(function (err, users) {
+    User.find({
+        email: email
+    }).exec(function(err, users) {
         //return true;
         fn((!err && users.length === 0));
     });
@@ -83,7 +94,7 @@ UserSchema.path('email').validate(function (email, fn) {
  */
 
 UserSchema.pre('save', function(next) {
-    if (!this.isNew) return next();//???
+    if (!this.isNew) return next(); //???
 
     if (!validatePresenceOf(this.password))
         next(new Error('Invalid password'));

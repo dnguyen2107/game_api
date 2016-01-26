@@ -1,6 +1,3 @@
-/**
- * Created by DreamSoft on 7/30/2015.
- */
 
 var mongoose = require('mongoose');
 var config = require(__dirname + '/config');

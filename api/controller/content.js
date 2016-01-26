@@ -5,7 +5,10 @@
 var config = require('../common/config');
 var AWS = require('aws-sdk');
 //setup AWS configuration
-AWS.config.update({accessKeyId: config.AWS_ACCESS_KEY_ID, secretAccessKey: config.AWS_SECRET_ACCESS_KEY});
+AWS.config.update({
+    accessKeyId: config.AWS_ACCESS_KEY_ID,
+    secretAccessKey: config.AWS_SECRET_ACCESS_KEY
+});
 var s3 = new AWS.S3();
 var Content = require(__dirname + '/../model/content');
 
@@ -13,7 +16,7 @@ var contentApi = {};
 
 contentApi.getContents = function(req, res, next) {
     Content.find({}, function(err, contents) {
-        if(err)
+        if (err)
             return res.send(err);
         return res.status(200).send({
             status: 200,
@@ -23,39 +26,47 @@ contentApi.getContents = function(req, res, next) {
     });
 };
 
-contentApi.getContentById = function(req,res,next) {
+contentApi.getContentById = function(req, res, next) {
     var contentId = req.params.id;
     console.log("contentId = " + contentId);
-    Content.find({_id: contentId}, function(err, content) {
-        if(err) {
+    Content.find({
+        _id: contentId
+    }, function(err, content) {
+        if (err) {
             return res.status(200).send({ 
-                status: 404, 
+                status: 404,
+                 
                 message: err
             });
         }
         return res.status(200).send({ 
-                status: 200, 
-                content: content,
-                message: 'Successfully retrieve content object' 
-            });
+            status: 200,
+             
+            content: content,
+            message: 'Successfully retrieve content object' 
+        });
     });
 };
 
-contentApi.createContent = function (req,res,next) {
+contentApi.createContent = function(req, res, next) {
     var bucket = config.defaultBucket;
     var fileName = req.body.file_name;
     var userID = req.decoded._id;
 
     var key = userID + '_' + Date.now();
-    var params = {Bucket:bucket, Key:key, Expires:24*60*60};
-    s3.getSignedUrl('putObject', params, function(err,url){
-        if(err) {
+    var params = {
+        Bucket: bucket,
+        Key: key,
+        Expires: 24 * 60 * 60
+    };
+    s3.getSignedUrl('putObject', params, function(err, url) {
+        if (err) {
             return res.status(200).send({ 
-                status: 500, 
+                status: 500,
+                 
                 message: 'Internal Server Error.' 
             });
-        }
-        else {
+        } else {
             //save Content object to db
             var newContent = new Content({
                 key: key,
@@ -65,7 +76,7 @@ contentApi.createContent = function (req,res,next) {
                 creator: userID
             });
             newContent.save(function(err) {
-                if(err) {
+                if (err) {
                     console.log(err);
                     return res.send(err);
                 }
@@ -77,33 +88,41 @@ contentApi.createContent = function (req,res,next) {
                     presigned_url: url,
                     message: 'Successfully get pre-signed url for putObject'
                 });
-            });        
+            });
         }
     })
 };
 
 contentApi.updateContentById = function(req, res, next) {
-    Content.update({_id: req.params.id}, { $set: req.body}, {upsert:false, runValidators:true}, function (err) {
-            if (err) {
-                console.log(err);
-                return res.status(200).send({
-                    status: 500,
-                    message: 'Internal Server Error'
-                });
-            }
+    Content.update({
+        _id: req.params.id
+    }, {
+        $set: req.body
+    }, {
+        upsert: false,
+        runValidators: true
+    }, function(err) {
+        if (err) {
+            console.log(err);
             return res.status(200).send({
-                status: 200,
-                message: 'Successfully update content object'
+                status: 500,
+                message: 'Internal Server Error'
             });
         }
-    );
+        return res.status(200).send({
+            status: 200,
+            message: 'Successfully update content object'
+        });
+    });
 };
 
 contentApi.deleteContentById = function(req, res, next) {
     var contentId = req.params.id;
     console.log("contentId = " + contentId);
-    Content.remove({_id: contentId}, function(err, content) {
-        if(err)
+    Content.remove({
+        _id: contentId
+    }, function(err, content) {
+        if (err)
             return res.send(err);
         return res.status(200).send({
             status: 200,
