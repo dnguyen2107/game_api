@@ -1,7 +1,8 @@
 # Node REST api
 
 Install Node first from https://nodejs.org
-Open command propmpt and cd to working directory and Run `npm install`
+
+Open command prompt and cd to working directory and Run `npm install`
 
 ## Run 'node server.js'
 
